@@ -1,0 +1,30 @@
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
+// General information about this assembly is provided by the following
+// set of attributes. Change the values of these attributes to change the information
+// related to the assembly.
+[assembly: AssemblyTitle("NaVeOl_Cripto")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("NaVeOl_Cripto")]
+[assembly: AssemblyCopyright("Copyright ©  2023 Eight To Seven | Naveol. ® 8(to)7 A Dutch company Registered IF-Depot IS BOIP Luxembourg:143627A")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+// Setting the value to False for the ComVisible parameter makes the types in this assembly invisible
+// for COM components. If you need to access a type in this assembly via
+//COM, you should set the ComVisible attribute to TRUE for this type.[assembly: ComVisible(false)]
+// The following GUID is used to identify the type library if this project will be visible to COM
+[assembly: Guid("dd8c982e-8c46-41ae-a33c-870802aefcfd")]
+// The build version information consists of the following four values:
+//
+// Main Version Number
+// Additional Version Number
+// Build Number
+// Revision
+//
+// You can set all values or accept the default build and revision numbers
+// using "*", as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
