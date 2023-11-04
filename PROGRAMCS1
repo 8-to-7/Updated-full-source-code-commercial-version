@@ -1,0 +1,10 @@
+﻿using System;
+using System.Windows.Forms;
+namespace NaVeOl_Cripto
+    internal static class Program
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [STAThread]
+        static void Main()
