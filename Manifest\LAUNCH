@@ -1,0 +1,140 @@
+The order of launching the program:
+    Run the program: "NaVeOl_ECO_Git\bin\Release\NaVeOl_ECO.exe "
+    Select: "Coord's"
+        Enter:
+            "coordinates"   # Any sequence of characters you play is the key
+                            # at least 8 characters
+            "Select coordinates file" # Any key file
+        Click: "Ok"            
+            
+    Select: "Config"
+        Directory Eco Input: "Change or leave by default"
+        Directory Eco Output: "Change or leave the default"
+        Click: "Ok"        
+    Select multiple files or directories:
+        Selecting a file or directory in the current Explorer window:
+        "Select one or more files and/or directories"
+            # Using (shift or ctrl) and the mouse pointer
+        Add the selected files and/or directories to the list or clear the list: 
+        "After selecting the files, click the context menu and select:        
+                + add to list files
+                - clear list files" 
+        Switching to another directory in the explorer window:
+        "Click Change Folder and select another directory"
+    Include in the Ecosystem:
+    "Click In_eco"
+    # # the result will be found in (Directory Echo Input)
+Exclude from Ecosystem:
+    "Click Out_eco"
+    # # the result will be found in (Directory Echo Output)
+        
+The order of compilation of the program:
+    Install: "Microsoft Visual Studio Community 2022"
+Open: "NaVeOl_Crypto.sln"
+Using: "Microsoft Visual Studio Community 2022"
+Compile the project: "In Realize mode"        
+    
+IDE:    
+    Microsoft Visual Studio Community 2022
+    Version 17.7.6
+    VisualStudio.17.Release/17.7.6+34221.43
+    Microsoft .NET Framework
+    Version 4.8.09037
+Installed version: Community
+    Visual C++ 2022   00482-90000-00000-AA691
+    Microsoft Visual C++ 2022
+    ASP.NET and Web Tools   17.7.274.37181
+    ASP.NET and Web Tools
+    Common Azure Tools   1.10
+    Provides common services for use by Azure Mobile Services and Microsoft Azure Tools.
+    Cookiecutter   17.0.23189.3
+    Provides tools for searching, instantiating, and configuring templates in cookie cutter format.
+    IncrediBuild Build Acceleration   1.6.0.2
+    IncrediBuild effectively reduces compilation and development times by up to 90%.
+    Microsoft JVM Debugger   1.0
+    Provides support for connecting the Visual Studio debugger to JDWP compatible Java Virtual Machines
+    Python с Pylance   17.0.23189.3
+    Provides IntelliSense, projects, templates, debugging, interactive windows and other auxiliary functions for Python developers.
+    Python — поддержка Django   17.0.23189.3
+    Пprovides templates and integration for the Django web platform.
+    Python — profiling support 17.0.23189.3
+    Profiling support for Python projects.
+    Visual C++ for cross-platform mobile application development (Android) 17.0.33906.96
+    Visual C++ for cross-platform mobile application development (Android)
+    Visual Studio IntelliCode   2.2
+    Development using artificial intelligence for Visual Studio.
+    Visual C++ for cross-platform mobile application development (iOS) 17.0.33906.96
+    Visual C++ for cross-platform mobile application development (iOS)
+    Visual F# Tools   17.7.0-beta.23314.10+e612cf93b989503c89e3a5830090062b7ab5e143
+    Microsoft Visual F# Tools
+    The Test Adapter for Google Test 1.0
+    Includes Visual Studio testing tools and unit tests for Google Test.  For terms of use and third-party notifications, see the extension installation directory.
+    Adapter of tests for Boost.Test 1.0
+    Allows you to use unit tests written for Boost.Test, in the Visual Studio testing tools. The Terms of Use and Notices of third parties are available in the extension installation directory.
+    NuGet Package Manager 6.7.0
+    NuGet Package Manager in Visual Studio. For more information about NuGet, see the website https://docs.nuget.org/
+    C# Tools 4.7.0-3.23517.17+
+    9d4cc0304792762c34f41cbbec67a1fcd2dc764f C# components used in the integrated development environment. Depending on the type and settings of the project, different versions of the compiler can be used.
+    Visual Basic Tools 4.7.0-3.23517.17+
+    9d4cc0304792762c34f41cbbec67a1fcd2dc764f Visual Basic components used in the integrated Development environment. Depending on the type and settings of the project, different versions of the compiler can be used.
+    Средства TypeScript   17.0.20829.2001
+    Средства TypeScript for Microsoft Visual Studio
+    Azure Application Service Tools, version 3.0.0 17.7.274.37181
+    Azure Application Service Tools, version 3.0.0
+Package Structure:
+    NaVeOl_ECO_Git\
+        bin\
+            Debug\          # debug version upload directory
+            Release\        # download directory of the final version 
+                Navel_ECO.exe.config
+                id.ini      # user identification number
+                license.ini # license number 
+                serial.ini  # serial number 
+                            # there is an algorithmic relationship between the user number, 
+                            # serial number and license number.
+                NaVeOl_ECO.exe  # Compiled executable file
+                Navel_ECO.pdb
+        obj\# IDE directory
+        Properties\     # IDE directory
+        Resources\      # IDE directory
+        Form1.cs # form 1 code
+        Form1.Designer.cs # form 1 constructor
+        Program.cs # program code
+        Resource1.Designer.cs # resource file code 1
+        Verify.cs # module verification id/sn/ls
+        MC DE.cs# module for encoding and working with files
+        Form2.cs # program code
+        Form2.resx
+        Form2.Designer.cs # form constructor 1
+        NaVeOl_Cripto.csproj
+        .gitattributes
+        .gitignore
+        NaVeOl_Cripto.csproj.user
+        Form1.resx
+        Resource1.resx
+        jj2.png             # the graphic element of the program is included in the resource file
+        jj1.png             # the graphic element of the program is included in the resource file
+        NaVeOl_Cripto.sln   # Main project file
+        FImg.png            # the graphic element of the program is included in the resource file
+        DImg.png            # the graphic element of the program is included in the resource file
+        DImg.bmp            # the graphic element of the program is included in the resource file       
+        FImg.bmp            # the graphic element of the program is included in the resource file
+        f1.png              # the graphic element of the program is included in the resource file
+        f2.png              # the graphic element of the program is included in the resource file
+        g1.png              # the graphic element of the program is included in the resource file
+        g2.png              # the graphic element of the program is included in the resource file
+        h1.png              # the graphic element of the program is included in the resource file
+        h2.png              # the graphic element of the program is included in the resource file
+        App.config
+        e2.PNG              # the graphic element of the program is included in the resource file
+        b1.PNG              # the graphic element of the program is included in the resource file
+        b2.PNG              # the graphic element of the program is included in the resource file
+        c1.PNG              # the graphic element of the program is included in the resource file
+        c2.PNG              # the graphic element of the program is included in the resource file
+        d1.PNG              # the graphic element of the program is included in the resource file
+        d2.PNG              # the graphic element of the program is included in the resource file
+        e1.PNG              # the graphic element of the program is included in the resource file
+        a2.PNG              # the graphic element of the program is included in the resource file
+        a1.PNG              # the graphic element of the program is included in the resource file
+        Icon2.ico           # the graphic element of the program is included in the resource file
+        Icon1.ico           # the graphic element of the program is included in the resource file
