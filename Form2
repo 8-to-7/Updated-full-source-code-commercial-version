@@ -1,0 +1,42 @@
+            textBox2.Text = MCDE.GlobalVariable.directoryEcoOut;
+        }
+      
+        //private void button1_Click(object sender, EventArgs e)
+        //{
+        //    Close();            
+        //}
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(textBox1.Text))
+            {
+                MCDE.GlobalVariable.directoryEco = textBox1.Text;
+            }
+            if (Directory.Exists(textBox2.Text))
+        }
+        private void pictureBox2_Click(object sender, EventArgs e)
+        // select distention directory for ECO system
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.Description = "Select directory of ECO";
+            folderBrowserDialog.ShowNewFolderButton = true;
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+            }
+        }
+        
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            pictureBox2.Image = NaVeOl_Cripto.Resource1.h2;
+            pictureBox1.Image = NaVeOl_Cripto.Resource1.f1;
+        }
+       
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            // select destention directory for ECO Out system
+                folderBrowserDialog.ShowNewFolderButton = true;
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    textBox2.Text = folderBrowserDialog.SelectedPath + "\\";
+                    MCDE.GlobalVariable.directoryEcoOut = folderBrowserDialog.SelectedPath + "\\";
+                }
+            }
