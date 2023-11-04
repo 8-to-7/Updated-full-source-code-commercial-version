@@ -1,0 +1,24 @@
+            this.checkBox1.Text = "Use file-password";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Visible = false;
+            // 
+            // checkBox2
+            // 
+            this.label1.Size = new System.Drawing.Size(92, 17);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Configuration";
+            // 
+            // label2
+            // 
+            this.label2.Size = new System.Drawing.Size(98, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Directory Eco Input";
+            // 
+            // pictureBox1
+            // 
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "FormConfig";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
