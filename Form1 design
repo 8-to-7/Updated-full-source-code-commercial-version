@@ -1,0 +1,68 @@
+ partial class Form1
+    {
+        /// <summary>
+        /// Required constructor variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+        /// <summary>
+        /// Release all used resources.
+        /// </summary>
+        /// <param name="disposing">true if the managed resource is to be deleted; otherwise false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            base.Dispose(disposing);
+        }
+        #region Code, automatically created by the Windows Form Designer
+        /// <summary>
+        /// Required method to support the constructor — do not change 
+        /// the contents of this method using the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Coordinates";
+            this.label1.Visible = false;
+            // 
+            // textBox1
+            // 
+            this.dataGridView1.Size = new System.Drawing.Size(406, 198);
+            this.dataGridView1.TabIndex = 16;
+            this.dataGridView1.Visible = false;
+            
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            this.dataGridView1.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView1_ColumnWidthChanged);
+            
+            // 
+            // contextMenuStrip1
+            // 
+            this.clearToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(159, 48);
+            // 
+            // filesToolStripMenuItem
+            // 
+            this.statusStrip1.TabIndex = 21;
+            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip1.Visible = false;
+            // 
+            // label4
+            // 
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(288, 12);
+            this.progressBar1.TabIndex = 23;
+            // 
+            // pictureBox9
+            // 
+            this.pictureBox6.TabIndex = 17;
+            this.pictureBox6.TabStop = false;
+            this.pictureBox6.Visible = false;
+            this.pictureBox6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox6_MouseDown);
+            this.pictureBox6.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox6_MouseUp);
+            // 
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Naveol Eco- zero user license";
+            this.Resize += new System.EventHandler(this.Form1_Resize);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
