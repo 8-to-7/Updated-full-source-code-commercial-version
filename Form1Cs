@@ -1,0 +1,716 @@
+
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq; 
+using System.Windows.Forms;
+using static NaVeOl_Cripto.MCDE;
+namespace NaVeOl_Cripto
+{
+    public partial class Form1 : Form
+    {
+        
+        public Form1()
+        {
+            InitializeComponent();
+            this.Height = 121;
+            this.Width = 320;
+            InitializeDataTable(dataTable);
+            // check (ID ?) exit
+            if (!System.IO.File.Exists("id.ini")) // // Error file-id is missing
+            { Application.Exit(); };
+            if (!System.IO.File.Exists("serial.ini")) // Error serial  is missing
+            { Application.Exit(); };     
+            if (!Verify.SN_ID_DemoChecker()) { Application.Exit(); };
+            // check (LS ?) demo
+            MCDE.GlobalVariable.demoVer = !Verify.LS_SN_RealizeChecker();
+            if (MCDE.GlobalVariable.demoVer)
+            { this.Text = "NaVeOl Eco - demo version"; }
+            else { this.Text = "NaVeOl Eco Professional"; }
+        }        
+        public bool TrEnableKey = false;
+        public byte[] Key5 = new byte[512];
+        public byte[] StatKey5 = new byte[512];
+        public byte[] HashKey = new byte[512];
+        public static long percentMax = 0;//***
+        public long percentValue = 0;
+        Stopwatch stopwatch = new Stopwatch();
+        #region Click the buttons Green Red Yellow Gray Blue
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            GetAllFilesFromMultiselect();
+            stopwatch.Start();
+            for (int i = 0; i < stringListFile.Length; i++)
+            // sorting through all the elements  stringListFile - full path
+            //porn elements correspond to them stringListFileDistant -relative path
+            { EcoIn(i); }
+            stopwatch.Stop();
+            // Cleaned and updated the "explorer"
+            // just cleared the table and lists and selected
+            clear_TableListFiles_Selected();
+            dataTable.Clear();
+            dataGridView1.DataSource = FillDataTable(GlobalVariable.currentDirectory, dataTable);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show("Time is: " + Convert.ToString(stopwatch.Elapsed));
+            stopwatch.Reset();
+        }
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            GetAllFilesFromMultiselect();
+            stopwatch.Start();
+            for (int i = 0; i < stringListFile.Length; i++)
+            { Eco_Out(i); }
+            stopwatch.Stop();
+            // Cleared and updated the "explorer"
+            // just cleared the table and lists and selected
+            clear_TableListFiles_Selected();
+            dataTable.Clear();
+            dataGridView1.DataSource = FillDataTable(GlobalVariable.currentDirectory, dataTable);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show("Time is: " + Convert.ToString(stopwatch.Elapsed));
+            stopwatch.Reset();
+        }
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            HideShowKeyForm();
+            dataGridView1.Visible = false;
+        }
+        private void pictureBox5_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("NaVeOl Eco is a system data encoding method that uses the \"8(to)7\" " +
+                "the security and confidentiality of your confidential information.\r\n\r\n" +
+                "In general, NaVeOl Eco is the latest, reliable and effective method of encoding and " +
+                "protecting confidential data.", "Information about NaVeOl Eco");
+        }
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            FormConfig frm2 = new FormConfig();
+            frm2.ShowDialog(); // Launch Form2
+        }
+        #endregion
+        #region Interface   
+        #region Click on the additional buttons    
+        private void pictureBox7_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                string selectedPath = folderBrowserDialog.SelectedPath;
+                ////Moving to the designated directory ***********
+                //update the current directory
+                GlobalVariable.currentDirectory = selectedPath;
+                dataTable.Clear();
+                //// load catalog
+                dataGridView1.DataSource = FillDataTable(selectedPath, dataTable);
+            }
+        }
+        private void pictureBox9_Click(object sender, EventArgs e)
+        {
+            TrEnableKey = CheckFillingKeyForm();
+            if (TrEnableKey)  // unvisible
+            {
+                HideShowKeyForm();
+                this.Height = 341;
+                this.Width = 422;
+                dataGridView1.Visible = true;
+                pictureBox8.Visible = true;
+                label5.Visible = true;
+                dataGridView1.DataSource = FillDataTable("C:\\", dataTable);
+                #region Настройка таблицы  
+                dataGridView1.Columns[0].HeaderText = "";
+                dataGridView1.Columns[5].Visible = false;
+                dataGridView1.Columns[6].Visible = false;
+                #endregion
+            }
+        }
+        #endregion
+        #region Move Buttons   
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+        #endregion
+        #endregion
+       
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            label1.Text = "PassWord " +
+                Convert.ToString(textBox1.Text.Length) + " characters";
+        }
+        #region Menu connection with buttons
+        private void encodeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1_Click(null, null);
+        #endregion
+       
+        /// <summary>
+        /// Checking the filling in of the password form fields 
+        /// and check for errors
+        /// </summary>
+        private bool CheckFillingKeyForm()
+        {
+            //Check that all fields are filled in correctly
+            bool trig = true;
+            if (textBox1.Text.Length < 8)// The error is less than 8 characters in the password
+            {
+                trig = false;
+                MessageBox.Show("You must enter a password of at least 8 characters");
+            }
+            if (textBox2.Text.Length == 0)//The error is 0 characters in the password
+            {
+                trig = false;
+                MessageBox.Show("You must enter address a password file");
+            }
+            if (!System.IO.File.Exists(textBox2.Text)) // The error file is empty
+            {
+                trig = false;
+                MessageBox.Show("Error password file address");
+            return trig;
+        }
+        /// <summary>
+        /// Turns the password file into a 512 Buff key
+        /// </summary>
+        private void Key512FromFilePwd()
+        {
+            using (FileStream fs = System.IO.File.OpenRead(textBox2.Text))//the key file was turned into a key array Buff
+            {
+                for (int i = 0; i < 512; i++) { Buff[i] = 0; };//Cleared
+                while (fs.Read(Data, 0, 512) > 0)// we read in blocks of 512 bytes to the end of the file
+                {
+                    for (int i = 0; i < 512; i++) { Buff[i] += Data[i]; };//Put all the arrays into one
+                }
+            }// ++ Buff
+        }
+        /// <summary>
+        ///All passwords are User, file, ID, and in the future, S/N are converted into one key per 512
+        /// </summary>
+        private void ConsolidationToKey5()
+        {
+            // !!! Here all keys are static !!! ***
+            // finding the HASH of the key file
+            Hash = Files.FileToMD5(textBox2.Text);//received a HASH of 32 bytes++ 
+            HashKey = MCDE.Keys.StrechArray_byte512(Hash);// let's stretch the HASH to 512 bytes ++
+            Key512FromFilePwd();// Turning the Key file into a Buff[] 512 bytes
+            for (int i = 0; i < 512; i++) { HashKey[i] ^= Buff[i]; } // ++let's put a Buff on the HashKey
+            // .. finding the static key
+            StatKey5 = Randomize.RndConst1(HashKey[78], 512);// 
+            //////}
+            // We stretch the password to a large key
+            Key5 = MCDE.Keys.Pas_strechToArray512(textBox1.Text);
+            // We knock everything into one array
+            for (int i = 0; i < 512; i++)
+            {
+                Key5[i] = (byte)(Key5[i] ^ StatKey5[i] + (HashKey[i] + 1));
+            }
+            ////Explanation of key operations:
+            ////    Hash->HashKey(Buff)->HashKey
+            ////    file->Buff
+            ////    StatKey5
+            ////    Key5(StatKey5, HashKey)->Key5
+        }
+        /// <summary>
+        /// Checking the form completion 
+        /// and based on user-entered data 
+        /// /// creating the key KEY5
+        /// </summary>
+        private void CheckFormAndMakeKey5()
+        {
+            TrEnableKey = CheckFillingKeyForm(); // checking the form completion
+                                                 //TrEnableKey = trig; // Send to the Global Variable
+                                                 // result of filling out the form
+            if (TrEnableKey)//If the form is filled out correctly
+            {
+                ConsolidationToKey5(); //We collect the Password, password file, ID and create a Key(512) from it
+            }
+        }
+            label1.Visible = !label1.Visible;
+            label2.Visible = !label2.Visible;
+            label3.Visible = !label3.Visible;
+            textBox1.Visible = !textBox1.Visible;
+            textBox2.Visible = !textBox2.Visible;
+            pictureBox6.Visible = !pictureBox6.Visible;
+            pictureBox7.Visible = !pictureBox7.Visible;
+            pictureBox9.Visible = !pictureBox9.Visible;
+            statusStrip1.Visible = !statusStrip1.Visible;
+            this.Height = 252;
+            this.Width = 412;
+        }
+        private void HideKeyForm()
+        {
+            label1.Visible = false;
+            textBox1.Visible = false;
+            textBox2.Visible = false;
+            pictureBox6.Visible = false;
+            pictureBox7.Visible = false;
+            pictureBox9.Visible = false;
+        }
+      
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            label4.Text = Convert.ToString(stringListFile.Length) + "select files";
+        }
+        #region Files Selecter
+        static readonly DataTable dataTable = new System.Data.DataTable();
+        string[] stringList = new string[0];
+        string[] stringListDistant = new string[0];
+        string[] stringListFile = new string[0];
+        string[] stringListFileDistant = new string[0];
+        string[] stringListDir = new string[0];
+        void InitializeDataTable(DataTable dataTable)
+        {
+            dataTable.Columns.Add("Ico", typeof(Image));
+            dataTable.Columns.Add("Name");
+            dataTable.Columns.Add("Ext");
+            dataTable.Columns.Add("Path");
+            dataTable.Columns.Add("Type");
+            dataTable.Columns.Add("Number");
+            dataTable.Columns.Add("Sort");
+        }
+        DataTable FillDataTable(string path, DataTable dataTable)
+        {
+            pictureBox1.Image = Resource1.a2;
+            Image image1 = Resource1.DImg;
+            Image image2 = Resource1.FImg;
+            string folderPath = path;
+            DirectoryInfo directory = new DirectoryInfo(folderPath);
+            // Getting a list of folders from a folder
+            System.IO.DirectoryInfo[] dirs = directory.GetDirectories();
+            // Filling the DataTable with file data
+            foreach (DirectoryInfo file in dirs)
+            {
+                dataTable.Rows.Add(image1, file.Name, file.Extension, file.FullName, "D");
+            }
+            // Getting a list of files from a folder
+            FileInfo[] files = directory.GetFiles();
+            // Filling the DataTable with file data
+            foreach (FileInfo file in files)
+            {
+                dataTable.Rows.Add(image2, file.Name, file.Extension, file.FullName, "F");
+            }
+            return dataTable;
+        }// 
+        void SelectToStringList()
+        {
+            DataGridViewSelectedRowCollection selectedRows = dataGridView1.SelectedRows;
+            // The user has selected rows, we will iterate over each of them
+            foreach (DataGridViewRow row in selectedRows)
+            {
+                // In each row, select a cell in the desired column
+                string column1Value = row.Cells["Name"].Value.ToString();
+                // We will add the data to the string array
+                Array.Resize(ref stringList, stringList.Length + 1);
+                stringList[stringList.Length - 1] = column1Value;
+            }
+        }
+        void GetAllFilesFromDir(string path)
+        {
+            // Get all files in the directory and its subdirectories
+            string[] files;
+            try
+            {
+                files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show("Unauthorized Access !" + Convert.ToString(ex), "Exception");
+                goto Label1;
+            }
+            // Print the full path of each file
+            foreach (string file0 in files)
+            {   // we write the source files in one list
+                Array.Resize(ref stringListFile, stringListFile.Length + 1);
+                stringListFile[stringListFile.Length - 1] = file0;
+                // take a relative path and put it in the final list
+                // Find the index of the first occurrence of the substring
+                string subString = GlobalVariable.currentDirectory;
+                int index = file0.IndexOf(subString);
+                string file1;
+                if (index >= 0)
+                { // Deleting the substring - got a relative path
+                    file1 = file0.Remove(index, GlobalVariable.currentDirectory.Length);
+                    // Written to the final list
+                    Array.Resize(ref stringListFileDistant, stringListFileDistant.Length + 1);
+                    stringListFileDistant[stringListFileDistant.Length - 1] = file1;
+                }
+            }
+        Label1:;
+        }
+        //All files from the directory and its subdirectories 
+        //moved to a string array
+        void GetOnlySelectionDirectories()
+        {
+            // Assuming the data source for dataGridView1 is a DataTable called "dataTable"
+            DataTable dataTable = (DataTable)dataGridView1.DataSource;
+            // Iterate over the selected rows
+            foreach (DataGridViewRow selectedRow in dataGridView1.SelectedRows)
+            {
+                // Get the corresponding DataRow from the DataTable
+                DataRow dataRow = ((DataRowView)selectedRow.DataBoundItem).Row;
+                // Access the value of the "Type" column
+                string typeValue = dataRow["Type"].ToString();
+                // Check if the value is "D"
+                if (typeValue == "D")
+                {
+                    // Access other column values if needed
+                    string column1Value = dataRow["Path"].ToString();
+                    Array.Resize(ref stringListDir, stringListDir.Length + 1);
+                    stringListDir[stringListDir.Length - 1] = column1Value;
+                }
+            }
+        }
+        //Only directories were moved from the selected one to the string array
+        void GetOnlySelectionFiles()
+        {
+            // Assuming the data source for dataGridView1 is a DataTable called "dataTable"
+            DataTable dataTable = (DataTable)dataGridView1.DataSource;
+            // Iterate over the selected rows
+            foreach (DataGridViewRow selectedRow in dataGridView1.SelectedRows)
+            {
+                // Get the corresponding DataRow from the DataTable
+                DataRow dataRow = ((DataRowView)selectedRow.DataBoundItem).Row;
+                // Access the value of the "Type" column
+                string typeValue = dataRow["Type"].ToString();
+                // Check if the value is "D"
+                if (typeValue == "F")
+                {
+                    //Take the original full path
+                    string column1Value = dataRow["Path"].ToString();
+                    //We take the final relative path
+                    string column1ValueDist = dataRow["Name"].ToString();
+                    // we put it in the original list
+                    Array.Resize(ref stringListFile, stringListFile.Length + 1);
+                    stringListFile[stringListFile.Length - 1] = column1Value;
+                    //we put it in the final list
+                    Array.Resize(ref stringListFileDistant, stringListFileDistant.Length + 1);
+                    stringListFileDistant[stringListFileDistant.Length - 1] = column1ValueDist;
+                }
+            }
+        }
+        //Only Files were moved from the selected one to the string array
+        void GetAllFilesFromMultiselect()
+        {
+            GetOnlySelectionFiles(); // Took the selected files from the root
+            GetOnlySelectionDirectories();//Took the selected directories
+            foreach (string str in stringListDir)
+            {
+                GetAllFilesFromDir(str);
+            }
+        }
+        #endregion     
+        private void EcoIn(int index /* stringListFile & stringListFileDistant*/)
+        {
+            //EnCript(); 
+            CheckFormAndMakeKey5();
+            if (TrEnableKey)
+            {
+                HideKeyForm();
+                //We find the full addresses of the source and 2 destination files
+                bool B = true;
+                long FSize;
+                string s = stringListFile[index]; /// SOURCE file, relative path
+                if (s == "") { B = false; };
+                // cut the file ******
+                // and replace the directory with a remote one
+                string s1 = GlobalVariable.directoryEco + stringListFileDistant[index] + ".nvl";
+                s1 = s1.Replace("\\\\", "\\");
+                if (B)
+                {
+                    FSize = Files.FileResize(s);// // adding a tail + 512 bytes = rnd + size Source File)
+                                                // Opening two files for reading and writing
+                    using (FileStream fs = System.IO.File.OpenRead(s))
+                    {  // if there is no ECO directory, we create
+                        if (!Directory.Exists(GlobalVariable.directoryEco))
+                        {
+                            Directory.CreateDirectory(GlobalVariable.directoryEco);
+                        }
+                        // if there is no directory for the final file in the ecosystem, we create
+                        string directoryOfDistantFile = Path.GetDirectoryName(s1);
+                        if (!Directory.Exists(directoryOfDistantFile))
+                        {
+                            Directory.CreateDirectory(directoryOfDistantFile);
+                        using (FileStream fs1 = System.IO.File.OpenWrite(s1))
+                        {
+                            #region Variables Encode
+                            byte[] b = new byte[256]; // block of MicroCoding
+                            ulong i = 0;//****
+                            int EOF; // 1 - Read // 0 - End of File
+                            byte[] K = new byte[512];//key
+                            byte[] R = new byte[512];//key
+                            //byte[] MAT1 = new byte[128];
+                            //byte[] MAT2 = new byte[128];
+                            byte[] MAT = new byte[256];
+                            //MAT2 = NaVeOl.GenMat7bit(Key5[MAT1[i++]]);
+                            int x = Key5[Key5[0]] + Key5[Key5[5]] * Key5[Key5[8]];
+                            MAT = NaVeOl.GenMat8bit(x & 726);
+                            i = (ulong)x; // scrolling the key will not start from the beginning
+                                          // move on QUICKLY! we encode without the last block
+                                          //we read eight 8 bytes each (64 bit matrix)
+                            #endregion// Declaring variables
+                            // // the block is created in MC DE.Files.File Resize in the same place, the tail
+                            // is added first and the length of the source file is secretly inserted
+                            R = GlobalVariable.EndRndBlock;
+                            for (int k = 0; k < Key5.Length; k++)// Fused the index and two keys
+                            {
+                                Key5[k] = (byte)(Key5[k] ^ R[k]);
+                            }
+                            percentMax = fs.Length;
+                            // Main : CODING CORE
+                            while ((EOF = fs.Read(b, 0, 256)) > 0) //we read 256 bytes except the End block
+                            {
+                                if ((fs.Position & 33554432) == 33554432)
+                                {
+                                    progressBar1.Value = (byte)(100.0 / (percentMax) * (fs.Position + 1.0));
+                                }
+                                Key5[11] = (byte)(Key5[111] ^ NaVeOl.Lower());
+                                // the slowdown of the program from version more could not be reduced
+                                #region key change each encoding block
+                                if ((i & 1) == 0)
+                                {// 4.5E-9 s/Mb
+                                    Key5 = NaVeOl.FreshQQKey(Key5, MAT, (int)i & 428);
+                                }
+                                // When decoding, the flip of the mats index is added<>Number
+                                // // and name change to MAT1i, MAT2 i, Mate
+                                #endregion
+                                // This Encoding 4.5E-9 s/Mb
+                                for (int j = 0; j < 256; j++)//****
+                                {
+                                    b[j] = (byte)(b[j] ^ Key5[j]);
+                                };                //1
+                                b = NaVeOl.Encoding_IQ2(b, MAT); // 6E-9 s/Mb  0.04 c / 6.775 Мб
+                                fs1.Write(b, 0, 256); //   6E-9 s/Mb
+                                i++;  // counter
+                            }
+                            fs1.Write(R, 0, 512); //RND(time) key to end file
+                            progressBar1.Value = 0;
+                        }
+                    }
+                    /// Trim the file to the original size ***** !!!! 
+                    /// Restoring. Increased at the beginning:
+                    //this function needs to be optimized Files.FileResize(s)
+                    using (FileStream fsSource = new FileStream(s, FileMode.Open))
+                    {
+                        fsSource.SetLength(GlobalVariable.SizeSourceFile);// see of size!!!
+                    }
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                MessageBox.Show("Press Yellow coordinates and fill out the form ");
+            }
+        }
+        private void Eco_Out(int index /* stringListFile & stringListFileDistant*/)
+        {
+            //If the keys are filled in:
+            CheckFormAndMakeKey5();
+            if (TrEnableKey)
+            {
+                HideKeyForm();
+                //We find the full addresses of the 2 source and destination files
+                bool B = true;
+#pragma warning disable CS0168 // 
+                long FSize;
+#pragma warning restore CS0168 //
+                string s1, ext;
+                string s = stringListFile[index];// input full address
+                s1 = s;
+                if (s == "") { B = false; }; // cheking
+                ext = Path.GetExtension(s);
+                if (ext != ".nvl") { B = false; };// check ext 1
+                s = Path.ChangeExtension(s, null);// del ext 1 
+                string pathOut = GlobalVariable.directoryEcoOut;
+                // we need to drop the current directory
+                // take the relative path and put it in the final list
+                // Find the index of the first occurrence of the substring
+                string subString = GlobalVariable.currentDirectory + "\\";
+                int indx = s.IndexOf(subString);
+                string file1 = "";
+                if (indx >= 0)
+                { // Deleting the substring - we got a relative path
+                    file1 = s.Remove(indx, subString.Length);
+                }
+                //                                                                           
+                s = pathOut + Path.GetDirectoryName(file1) + "\\" + Path.GetFileName(file1);//got the name of the final file All!!!!
+                s = s.Replace("\\\\", "\\");
+                if (TrEnableKey)
+                {
+                    if (B)
+                    {
+                        // Reading the Random Key from the last 512 Decoding block
+                        using (FileStream fs1 = System.IO.File.OpenRead(s1))
+                        {
+                            byte[] buffer = new byte[512]; // 512 bytes of data 
+                            FileStream fs = new FileStream(s1, FileMode.Open, FileAccess.Read); // Open file for reading 
+                            fs.Seek(-512, SeekOrigin.End); // Go to the end of the file and back 512 bytes 
+                            fs.Read(buffer, 0, 512); // Read 512 bytes into buffer 
+                            fs.Close();
+                            GlobalVariable.EndRndBlock = buffer;
+                        }
+                        //We pull out the length of the file from the last block
+                        byte[] m = new byte[8];
+                        for (int i = 0; i < 8; i++)
+                        //for the inverse function, rearrange A=B^C <-> B=A^C
+                        {
+                            m[i] = (byte)(GlobalVariable.EndRndBlock[i * i + 7]
+                                         ^ GlobalVariable.EndRndBlock[i + 87]);
+                        };// end encoding
+                        #region 
+                        GlobalVariable.SizeSourceFile = BitConverter.ToInt64(m, 0);
+                        long Fsize = GlobalVariable.SizeSourceFile;
+                        #endregion
+                        using (FileStream fs1 = System.IO.File.OpenRead(s1)) // nvl
+                        {
+                            if (!Directory.Exists(GlobalVariable.directoryEcoOut))
+                            {
+                                Directory.CreateDirectory(GlobalVariable.directoryEcoOut);
+                            }
+                            string directoryOfDistantFile = Path.GetDirectoryName(s);
+                            if (!Directory.Exists(directoryOfDistantFile))
+                            {
+                                Directory.CreateDirectory(directoryOfDistantFile);
+                            }
+                            using (FileStream fs = System.IO.File.OpenWrite(s))  // Decoding recoverable file
+                            {
+                                #region Variables Decode
+                                byte[] b = new byte[256]; // block for micro encoding
+                                ulong i = 0;// counter for  key
+                                int EOF; // 1 - reading // 0 - end of file
+                                byte[] K = new byte[512];//key
+                                byte[] R = new byte[512];//key                                                         
+                                byte[] MAT = new byte[256];
+                                byte[] MATi = new byte[256];
+                                int x = Key5[Key5[0]] + Key5[Key5[5]] * Key5[Key5[8]];
+                                MAT = NaVeOl.GenMat8bit(x & 726);
+                                i = (ulong)x; // scrolling the key will not start from the beginning
+                                              // When decoding, the flip of the mats index is added<>Number
+                                              // // and name change to MAT1i, MAT2 i, Mate
+                                MATi = NaVeOl.MatTableReplaceIndx2Num(MAT);
+                                #endregion
+                                R = GlobalVariable.EndRndBlock;
+                                for (int k = 0; k < Key5.Length; k++)// 
+                                { Key5[k] = (byte)(Key5[k] ^ R[k]); }
+                                percentMax = fs1.Length;
+                                while ((EOF = fs1.Read(b, 0, 256)) > 0) // we read 256 bytes except the End block
+                                {
+                                    // we read 1 byte except the End of the EOF block on the DNA will end, and 512 bytes of Random Key will remain on the RNA
+                                    // // the microscopy unit is now full
+                                    #region Key change each decoding unit
+                                    //Changing the key every block
+                                    Key5[11] = (byte)(Key5[111] ^ NaVeOl.Lower()); // slowing down the program from the version
+                                    if ((i & 1) == 0)
+                                    {
+                                        Key5 = NaVeOl.FreshQQKey(Key5, MAT, (int)i & 428);
+                                    }
+                                    else
+                                    {
+                                        MAT = NaVeOl.FreshQMAT(MAT, Key5[i & 511]);
+                                        MATi = NaVeOl.MatTableReplaceIndx2Num(MAT);
+                                    }
+                                    #endregion
+                                    percentValue = fs1.Position;
+                                    //  Change progressBar
+                                    if ((fs.Position & 33554432) == 33554432)
+                                    {
+                                        progressBar1.Value = (byte)(100.0 / (percentMax) * (fs.Position + 1.0));
+                                    }
+                                    b = NaVeOl.Decoding_IQ2(b, MATi);
+                                    // encoding
+                                    for (int j = 0; j < 256; j++)
+                                    {
+                                        b[j] = (byte)(b[j] ^ Key5[j]);
+                                    };                 //1
+                                    fs.Write(b, 0, 256); //                                        
+                                    i++;   //counter
+                                }
+                            }
+                        }
+                        /// Trim the file to the original size ***** !!!!
+                        using (FileStream fsSource = new FileStream(s, FileMode.Open))
+                        {
+                            fsSource.SetLength(GlobalVariable.SizeSourceFile);// see of size!!!
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                }
+            }
+            progressBar1.Value = 0;
+        }
+            }
+        }
+        
+        
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //// This all
+            //// doubleClick and go to to catalog 
+            ///
+            object cellValue = dataGridView1.Rows[e.RowIndex].Cells[4].Value;
+            // change of data type
+            string value = cellValue.ToString();
+            if ((cellValue != null) && (value == "D")) // check
+            {   // get path
+                cellValue = dataGridView1.Rows[e.RowIndex].Cells[3].Value;
+                // change of data type
+                value = cellValue.ToString();
+                // reload current directory
+                GlobalVariable.currentDirectory = value;
+                dataTable.Clear();
+                //Load catalog
+                dataGridView1.DataSource = FillDataTable(value, dataTable);
+            }
+        }
+        private void filesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetAllFilesFromMultiselect();
+            // no select
+            dataGridView1.ClearSelection();
+            // don't repeat (see uses)
+            stringListFile = stringListFile.Distinct().ToArray();
+        }
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {   // clear of table and list of select
+            clear_TableListFiles_Selected();
+        }
+        private void clear_TableListFiles_Selected()
+        {   // clear of table and lists
+            Array.Resize(ref stringList, 0);// New list
+            Array.Resize(ref stringListFile, 0);// New list
+            Array.Resize(ref stringListFileDistant, 0);//New list
+            Array.Resize(ref stringListDir, 0);// СNew list
+            // no select
+            dataGridView1.ClearSelection();
+        }
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (dataGridView1.Visible)
+            {   // dynamically link the width of the form and the tables and columns
+                dataGridView1.Width = this.Width;
+                dataGridView1.Columns[3].Width = this.Width -
+                    dataGridView1.Columns[0].Width - dataGridView1.Columns[1].Width - 20;
+                // let's move the folder image to the size of the window
+                if ((this.Width - 61) < 361)
+                {
+                    pictureBox8.Left = 361;
+                    label5.Location = new Point(330, label5.Location.Y);
+                }
+                else
+                    pictureBox8.Left = this.Width - 61;
+                    label5.Location = new Point(this.Width - 92, label5.Location.Y);
+                }
+                //dynamically linking the height of the form and the table
+                dataGridView1.Height = this.Height - 143;
+                progressBar1.Location = new Point(progressBar1.Location.X, this.Height - 56);
+            }
+                    dataGridView1.Columns[0].Width - dataGridView1.Columns[1].Width - 20;
+            }
+        }
+    }
+}
